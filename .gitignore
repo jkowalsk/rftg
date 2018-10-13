@@ -4,6 +4,8 @@ dumpnet
 learner
 rftg
 
+build/
+
 # generic :
 Makefile
 config.h
