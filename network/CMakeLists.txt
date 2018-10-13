@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(rftg-network)
 
-message("rftg-network cmake file")
-
 set(NETWORK_DATA_FILES
     rftg.role.1.2.net
     rftg.eval.3.2a.net
@@ -58,4 +56,9 @@ set(NETWORK_DATA_FILES
     rftg.eval.4.2.net
 )
 
-message("  NETWORK_DATA_FILES: ${NETWORK_DATA_FILES}")
+
+file(COPY ${NETWORK_DATA_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+install(FILES ${NETWORK_DATA_FILES}
+    DESTINATION ${DATA_INSTALL_DIR}/network
+    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+)
