@@ -3,10 +3,6 @@ project(rftg C)
 
 set(PROJECT_NAME "rftg")
 
-#message("CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
-#list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/")
-#message("CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
-
 # manage option
 option(ENABLE_SERVER "enable multiplayer server" OFF)
 
@@ -52,53 +48,53 @@ include_directories(${GTK2_INCLUDE_DIRS})
 
 # sources set definitions
 set(HEADERS
-    client.h
-    comm.h
-    net.h
-    rftg.h
+    include/client.h
+    include/comm.h
+    include/net.h
+    include/rftg.h
 )
 
 set(RFTG_SRC 
-    engine.c
-    init.c
-    ai.c
-    loadsave.c
-    gui.c
-    net.c
-    client.c
-    comm.c
+    src/engine.c
+    src/init.c
+    src/ai.c
+    src/loadsave.c
+    src/gui.c
+    src/net.c
+    src/client.c
+    src/comm.c
 )
 
 set(LEARNER_SRC
-    engine.c 
-    init.c 
-    ai.c 
-    learner.c 
-    net.c 
+    src/engine.c 
+    src/init.c 
+    src/ai.c 
+    src/learner.c 
+    src/net.c 
 )
 
 set(DUMPNET_SRC 
-    net.c 
-    dumpnet.c
+    src/net.c 
+    src/dumpnet.c
 )
 
 set(SERVER_SRC
-    server.c 
-    engine.c 
-    init.c 
-    ai.c 
-    loadsave.c 
-    net.c 
-    comm.c
+    src/server.c 
+    src/engine.c 
+    src/init.c 
+    src/ai.c 
+    src/loadsave.c 
+    src/net.c 
+    src/comm.c
 )
 
 set(AI_CLIENT_SRC
-    ai_client.c 
-    engine.c 
-    init.c 
-    ai.c 
-    net.c
-    comm.c 
+    src/ai_client.c 
+    src/engine.c 
+    src/init.c 
+    src/ai.c 
+    src/net.c
+    src/comm.c 
 )
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -DRFTGDIR=\\\"${RFTGDIR}\\\" ")
@@ -108,20 +104,75 @@ if(ENABLE_SERVER)
 
 endif(ENABLE_SERVER)
 
+include_directories(include ${CMAKE_CURRENT_BINARY_DIR})
+
 add_executable(${PACKAGE} ${HEADERS} ${RFTG_SRC})
 target_link_libraries(${PACKAGE} ${GTK2_LIBRARIES} -lm)
 
 # Data file management
-add_subdirectory(network)
-
-
 set(DATA 
-    cards.txt 
-    campaign.txt 
-    images.data
+    gamedata/cards.txt 
+    gamedata/campaign.txt 
+    gamedata/images.data
+)
+
+set(NETWORK_DATA_FILES
+    gamedata/network/rftg.role.1.2.net
+    gamedata/network/rftg.eval.3.2a.net
+    gamedata/network/rftg.eval.0.4.net
+    gamedata/network/rftg.role.0.2a.net
+    gamedata/network/rftg.eval.3.5.net
+    gamedata/network/rftg.role.3.4.net
+    gamedata/network/rftg.role.1.4.net
+    gamedata/network/rftg.role.1.3.net
+    gamedata/network/rftg.role.2.2a.net
+    gamedata/network/rftg.eval.0.3.net
+    gamedata/network/rftg.role.3.2a.net
+    gamedata/network/rftg.role.0.2.net
+    gamedata/network/rftg.role.2.6.net
+    gamedata/network/rftg.role.3.2.net
+    gamedata/network/rftg.role.1.2a.net
+    gamedata/network/rftg.eval.2.5.net
+    gamedata/network/rftg.role.4.4.net
+    gamedata/network/rftg.eval.1.4.net
+    gamedata/network/rftg.eval.2.6.net
+    gamedata/network/rftg.role.3.3.net
+    gamedata/network/rftg.eval.3.2.net
+    gamedata/network/rftg.role.4.5.net
+    gamedata/network/rftg.role.3.6.net
+    gamedata/network/rftg.eval.4.3.net
+    gamedata/network/rftg.eval.4.4.net
+    gamedata/network/rftg.role.4.2.net
+    gamedata/network/rftg.eval.0.2a.net
+    gamedata/network/rftg.eval.3.4.net
+    gamedata/network/rftg.role.2.5.net
+    gamedata/network/rftg.role.4.2a.net
+    gamedata/network/rftg.eval.0.2.net
+    gamedata/network/rftg.role.0.4.net
+    gamedata/network/rftg.role.3.5.net
+    gamedata/network/rftg.eval.2.3.net
+    gamedata/network/rftg.eval.1.2a.net
+    gamedata/network/rftg.role.2.4.net
+    gamedata/network/rftg.eval.2.2a.net
+    gamedata/network/rftg.eval.1.2.net
+    gamedata/network/rftg.eval.2.4.net
+    gamedata/network/rftg.eval.3.3.net
+    gamedata/network/rftg.eval.4.5.net
+    gamedata/network/rftg.role.2.3.net
+    gamedata/network/rftg.role.4.3.net
+    gamedata/network/rftg.role.0.3.net
+    gamedata/network/rftg.eval.1.3.net
+    gamedata/network/rftg.eval.4.2a.net
+    gamedata/network/rftg.eval.3.6.net
+    gamedata/network/rftg.eval.2.2.net
+    gamedata/network/rftg.role.1.5.net
+    gamedata/network/rftg.eval.1.5.net
+    gamedata/network/rftg.role.2.2.net
+    gamedata/network/rftg.eval.4.2.net
 )
 
 file(COPY ${DATA} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${NETWORK_DATA_FILES} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/network)
 
 ## for installing target
 install(TARGETS ${PACKAGE}
@@ -136,5 +187,10 @@ install(FILES do_train
 
 install(FILES ${DATA}
     DESTINATION ${DATA_INSTALL_DIR}
+    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+)
+
+install(FILES ${NETWORK_DATA_FILES}
+    DESTINATION ${DATA_INSTALL_DIR}/network
     PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
 )

@@ -2,7 +2,7 @@
 .deps/*
 dumpnet
 learner
-rftg
+
 
 build/
 
