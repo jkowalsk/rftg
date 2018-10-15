@@ -129,6 +129,7 @@ set(DATA
     gamedata/cards.txt 
     gamedata/campaign.txt 
     gamedata/images.data
+    gamedata/rftg.ico
 )
 
 set(NETWORK_DATA_FILES

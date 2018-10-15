@@ -13479,6 +13479,20 @@ void switch_view(int lobby, int chat)
 	}
 }
 
+
+static GdkPixbuf *create_pixbuf(const gchar * filename) {    
+   GdkPixbuf *pixbuf;
+   GError *error = NULL;
+   pixbuf = gdk_pixbuf_new_from_file(filename, &error);
+   
+   if (!pixbuf) {       
+      fprintf(stderr, "%s\n", error->message);
+      g_error_free(error);
+   }
+
+   return pixbuf;
+}
+
 /*
  * Setup windows, callbacks, etc, then let GTK take over.
  */
@@ -13509,6 +13523,7 @@ int main(int argc, char *argv[])
 	GtkCellRenderer *render, *toggle_render;
 	GtkTreeViewColumn *desc_column;
 	GdkColor color;
+	GdkPixbuf *icon;
 
 	char *fname = NULL;
 	char msg[1024];
@@ -13708,6 +13723,10 @@ int main(int argc, char *argv[])
 
 	/* Set window title */
 	gtk_window_set_title(GTK_WINDOW(window), TITLE);
+
+	/* Set icon */
+	icon = create_pixbuf("rftg.ico");  
+  	gtk_window_set_icon(GTK_WINDOW(window), icon);
 
 	/* Handle main window destruction */
 	g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(destroy),
