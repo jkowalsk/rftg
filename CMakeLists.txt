@@ -24,7 +24,12 @@ INCLUDE (CheckFunctionExists)
 set(DATA_INSTALL_DIR
     ${CMAKE_INSTALL_PREFIX}/share/${PACKAGE}/
 )
-set(RFTGDIR "${DATA_INSTALL_DIR}")
+
+if(WIN32)
+    set(RFTGDIR ".")
+else(WIN32)
+    set(RFTGDIR "${DATA_INSTALL_DIR}")
+endif(WIN32)
 
 CHECK_INCLUDE_FILES(inttypes.h HAVE_INTTYPES_H)
 CHECK_LIBRARY_EXISTS(m exp "" HAVE_LIBM)
@@ -43,8 +48,15 @@ CHECK_INCLUDE_FILES("stdlib.h;stdarg.h;string.h;float.h" STDC_HEADERS)
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/include/cmake-config.h.in ${CMAKE_CURRENT_BINARY_DIR}/include/config.h)
 
 # check for gtk2
-find_package(GTK2 2.16.0 REQUIRED gtk)
-include_directories(${GTK2_INCLUDE_DIRS})
+# set(GTK2_DEBUG true)
+# find_package(GTK2 2.16.0 REQUIRED gtk)
+# include_directories(${GTK2_INCLUDE_DIRS})
+# message("GTK2_INCLUDE_DIRS : ${GTK2_INCLUDE_DIRS}")
+
+find_package (PkgConfig REQUIRED)
+pkg_check_modules (GTK2 REQUIRED gtk+-2.0)
+include_directories (${GTK2_INCLUDE_DIRS})
+link_directories (${GTK2_LIBRARY_DIRS})
 
 # sources set definitions
 set(HEADERS
@@ -97,17 +109,20 @@ set(AI_CLIENT_SRC
     src/comm.c 
 )
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -DRFTGDIR=\\\"${RFTGDIR}\\\" ")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DHAVE_CONFIG_H -Wall -DRFTGDIR=\\\"${RFTGDIR}\\\" ")
+if(WIN32)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -mwindows") # hide command shell
+endif(WIN32)
 
-if(ENABLE_SERVER)
-  find_package(SQLITE3 REQUIRED)
+include_directories(include ${CMAKE_CURRENT_BINARY_DIR}/include)
 
-endif(ENABLE_SERVER)
-
-include_directories(include ${CMAKE_CURRENT_BINARY_DIR})
+set(DEP_LIBRARIES -lm)
+if(WIN32)
+    set(DEP_LIBRARIES ${DEP_LIBRARIES} -lwsock32 -lws2_32)
+endif(WIN32)
 
 add_executable(${PACKAGE} ${HEADERS} ${RFTG_SRC})
-target_link_libraries(${PACKAGE} ${GTK2_LIBRARIES} -lm)
+target_link_libraries(${PACKAGE} ${GTK2_LIBRARIES} ${DEP_LIBRARIES})
 
 # Data file management
 set(DATA 
